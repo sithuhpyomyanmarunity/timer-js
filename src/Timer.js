@@ -37,7 +37,7 @@ class Timer {
         this.#updateTimer();
     }
 
-    #tiggerTimerUpdated(currentTime) {
+    #triggerTimerUpdated(currentTime) {
         let remainingDuration = (this.#startTime + this.#duration) - currentTime;
 
         let minute = Math.floor(remainingDuration / 60000);
@@ -48,6 +48,10 @@ class Timer {
         if (second == 60) {
             minute += 1;
             second = 0;
+        }
+
+        if (minute < 0) {
+            minute = 0;
         }
         
         document.dispatchEvent(new CustomEvent("timer-updated", {
@@ -68,9 +72,6 @@ class Timer {
 
         this.#excepted = this.#excepted ? (this.#excepted + this.#interval) : (now + this.#interval);
 
-
-        this.#tiggerTimerUpdated(now);
-
         if (!this.#startTime) {
             this.#startTime = now;
             document.dispatchEvent(new CustomEvent("timer-started", { 
@@ -80,6 +81,8 @@ class Timer {
                 }
             }));
         }
+
+        this.#triggerTimerUpdated(now);
 
         if ((this.#startTime + this.#duration) <= now) {
 
